@@ -8,10 +8,9 @@ Time = param.Time;
 YMIN = min(Data);
 YMAX = max(Data);
 
-h = figure; hold on; 
+h = figure('color', [1 1 1]); hold on; 
 text_size = 13;
-
-box on; grid on; 
+title_text = ['RSVP 01 Duration: ' num2str(round(param.speed * param.framesec * 1000)) ' ms/picture'];
 
 if (flag_save) 
     set(h,'Position',[1 1 1400 900]); 
@@ -22,30 +21,36 @@ if (flag_save)
 end
 
 plot_Data = Data;
-    
+
+plot_Time = Time > (param.onset_time - param.baseline) &...
+    Time < (param.offset_time + param.inter);
+
+Time = Time(plot_Time) * 1000;
+plot_Data = plot_Data(plot_Time);
+
 % smooth accuracy data, not significant time data
 if ( flag_smooth ) 
     plot_Data = conv(plot_Data,smooth_vector,'same');
 end
 
-plot_Time = Time > (param.onset_time - param.baseline) &...
-    Time < (param.offset_time + param.inter);
-
-Time = Time(plot_Time);
-plot_Data = plot_Data(plot_Time);
-
-plot(Time,plot_Data','LineWidth',2);
+plot(Time,plot_Data,'LineWidth',1.5,'Color',[0 0 0]);
 
 axis([min(Time),max(Time),YMIN,YMAX]);
-if (YMIN>=0) line('XData', [min(Time),max(Time)], 'YData', [50 50], 'LineStyle', '-', 'LineWidth', 1.5, 'Color',[204/255 102/255 0]); end
-if (YMIN<0) line('XData', [min(Time),max(Time)], 'YData', [0 0], 'LineStyle', '-', 'LineWidth', 1.5, 'Color',[204/255 102/255 0]); end
-line('XData', [0 0], 'YData', [YMIN,YMAX], 'LineStyle', '-', 'LineWidth', 1.5, 'Color',[204/255 102/255 0])
-line('XData', [param.onset_time param.onset_time], 'YData', [YMIN,YMAX], 'LineStyle', '-', 'LineWidth', 1.5, 'Color',[204/255 102/255 0])
-line('XData', [param.offset_time param.offset_time], 'YData', [YMIN,YMAX], 'LineStyle', '-', 'LineWidth', 1.5, 'Color',[204/255 102/255 0])
+if (YMIN>=0) line('XData', [min(Time),max(Time)], 'YData', [50 50], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[204/255 102/255 0]); end
+if (YMIN<0) line('XData', [min(Time),max(Time)], 'YData', [0 0], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[204/255 102/255 0]); end
+
+line('XData', [0 0], 'YData', [YMIN,YMAX], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[0 0 1]);
+line('XData', [0 + param.speed*param.framesec 0 + param.speed*param.framesec] * 1000, 'YData', [YMIN,YMAX], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[0 0 1]);
+
+line('XData', [param.onset_time param.onset_time] * 1000, 'YData', [YMIN,YMAX], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[204/255 102/255 0])
+line('XData', [param.offset_time param.offset_time] * 1000, 'YData', [YMIN,YMAX], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[204/255 102/255 0])
 title(title_text, 'FontSize', text_size)
+xlabel('Time(ms)');
+ylabel('Accuracy(%)');
+set(gca,'xtick', -1000:200:2400);
 set(gca,'FontSize',text_size);
 
-
+print(h, ['Results/TimeDecoding_speed_' num2str(param.speed)],'-djpeg','-r0');
 % % % 
 % close all;
 % h = figure; text_size = 13;
