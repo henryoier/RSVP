@@ -29,16 +29,16 @@ function Step01_SVMClassifier()
 
 clear; clc
 ProjectName = 'rsvp';
-SubjectName = 'rsvp_01';  % 'grating03 to grating 16'
+SubjectName = 'rsvp_02';  % 'grating03 to grating 16'
 iitt = 'ii';                % 'ii' 'iitt' --- image-image-time-time mode off/on
-permutations = 'p1000';       % 'p10'
+permutations = 'p100';       % 'p10'
 group = 'groupall';    	% 'groupall' 'grouptest' 'group1'
 clusterflag = '0';          % '0' for single pc, '1' for cluster
-speeds = {1,3,6,10};
+speeds = {1,2,3};
 
 addpath(genpath('Functions')); % add path of functions
 
-param.trial_bin_size = 25;  % SVM parameter, group size
+param.trial_bin_size = 50;  % SVM parameter, group size
 
 %% parameters
 parameters_classifer;

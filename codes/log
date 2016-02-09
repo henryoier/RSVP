@@ -1,5 +1,10 @@
-# 2016. 2. 1
+# 2016. 02. 01
 Imported the data of rsvp_01 to brainstorm.
 
 Timeline:[-1135ms, 3002ms]
 [Baseline 300ms] + [5 * 167ms(maximum)] + [6 * 167ms] + [DecisionTime 2000ms] 
+
+# 2016. 02. 09
+Timeline: vary from subject to subject
+
+[Baseline 300ms] + [5 * speed * 17ms] + [6 * speed * 17ms] + [800ms]; 

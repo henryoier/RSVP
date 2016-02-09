@@ -10,7 +10,7 @@ YMAX = max(Data);
 
 h = figure('color', [1 1 1]); hold on; 
 text_size = 13;
-title_text = ['RSVP 01 Duration: ' num2str(round(param.speed * param.framesec * 1000)) ' ms/picture'];
+title_text = ['RSVP 02 Duration: ' num2str(round(param.speed * param.framesec * 1000)) ' ms/picture'];
 
 if (flag_save) 
     set(h,'Position',[1 1 1400 900]); 
