@@ -29,7 +29,7 @@ function Step01_SVMClassifier()
 
 clear; clc
 ProjectName = 'rsvp';
-SubjectName = 'rsvp_02';  % 'grating03 to grating 16'
+SubjectName = 'rsvp_03';  % 'grating03 to grating 16'
 iitt = 'ii';                % 'ii' 'iitt' --- image-image-time-time mode off/on
 permutations = 'p100';       % 'p10'
 group = 'groupall';    	% 'groupall' 'grouptest' 'group1'
@@ -62,7 +62,7 @@ for i_speed = 1:length(speeds)
     if(strcmp(iitt,'iitt')) 
         [AccuracyIITT,Weight,param] = svm_contrast_conditions_perm(SubjectName,{num2str(condA)},{num2str(condB)},param); 
     end
-    save(['Results/Accuracy_' num2str(speeds{i_speed})], 'AccuracyMEG','Weight','param');
+    save(['Results/' SubjectName '/mat/Accuracy_' num2str(speeds{i_speed})], 'AccuracyMEG','Weight','param');
 end
     
 disp('All finished!');
