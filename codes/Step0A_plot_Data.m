@@ -3,14 +3,14 @@ function h = Step0A_plot_Data(Data, param)
 flag_save = 1;
 flag_smooth = 1;
 smooth_vector = ones(1,50)/50;
-Time = param.Time;
+Time = param.Time - param.latency;
 
 YMIN = min(Data);
 YMAX = max(Data);
 
 h = figure('color', [1 1 1]); hold on; 
 text_size = 13;
-title_text = ['RSVP 02 Duration: ' num2str(round(param.speed * param.framesec * 1000)) ' ms/picture'];
+title_text = ['RSVP 03 Duration: ' num2str(round(param.speed * param.framesec * 1000)) ' ms/picture'];
 
 if (flag_save) 
     set(h,'Position',[1 1 1400 900]); 
@@ -22,11 +22,8 @@ end
 
 plot_Data = Data;
 
-plot_Time = Time > (param.onset_time - param.baseline) &...
-    Time < (param.offset_time + param.inter);
-
-Time = Time(plot_Time) * 1000;
-plot_Data = plot_Data(plot_Time);
+Time = Time * 1000;
+%plot_Data = plot_Data(plot_Time);
 
 % smooth accuracy data, not significant time data
 if ( flag_smooth ) 

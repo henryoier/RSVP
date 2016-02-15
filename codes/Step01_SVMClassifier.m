@@ -29,7 +29,7 @@ function Step01_SVMClassifier()
 
 clear; clc
 ProjectName = 'rsvp';
-SubjectName = 'rsvp_03';  % 'grating03 to grating 16'
+SubjectName = 'rsvp_02';  % 'grating03 to grating 16'
 iitt = 'ii';                % 'ii' 'iitt' --- image-image-time-time mode off/on
 permutations = 'p100';       % 'p10'
 group = 'groupall';    	% 'groupall' 'grouptest' 'group1'
@@ -48,7 +48,7 @@ parameters_analysis;
 tic;
 disp(['Subject = ' SubjectName]);
 for i_speed = 1:length(speeds)
-    disp(['Speed = ' i_speed]);
+    disp(['Speed = ' num2str(speeds{i_speed})]);
     condA = ['Face_' num2str(speeds{i_speed})];
     condB = ['Non-face_' num2str(speeds{i_speed})];
     
