@@ -38,7 +38,7 @@ speeds = {1,2,3};
 
 addpath(genpath('Functions')); % add path of functions
 
-param.trial_bin_size = 50;  % SVM parameter, group size
+param.trial_bin_size = 49;  % SVM parameter, group size
 
 %% parameters
 parameters_classifer;
