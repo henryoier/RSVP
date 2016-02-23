@@ -25,7 +25,7 @@ trial_bin_size = param.trial_bin_size;
 
 %% load data (force equal number of trials per condition) (single float)
 [trial_raw,param] = load_trials(brainstorm_db,subject,conditionsA,conditionsB,param);
-Time = param.Time - param.latency;
+Time = param.Time;
 
 ntimes = size(trial_raw{1}{1},2);
 ntrials = min([length(trial_raw{1}) length(trial_raw{2})]);
@@ -34,7 +34,7 @@ if ntrials < param.trial_number
 end
 
 %% correct for baseline std
-baseline_range = Time < param.onset_time & Time > (param.onset_time - param.baseline) ;
+baseline_range = Time < param.onset_time;
 for i = 1:2 %for both groups
     for j = 1:ntrials
         trial_raw{i}{j} = trial_raw{i}{j} ./ repmat( std(trial_raw{i}{j}(:,baseline_range)')',1,ntimes );
