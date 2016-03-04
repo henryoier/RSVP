@@ -1,8 +1,8 @@
 clear;clc;
-load('C:/Users/sheng/Desktop/Sheng Qin/Project of Sheng/Results/RSVP/behavior_data/rsvp_03/rsvp_03_behavioral_20160211_17.05.05.mat');
+load('C:/Users/sheng/Desktop/Sheng Qin/Project of Sheng/Results/RSVP/behavior_data/rsvp_05/rsvp_05_behavioral_20160226_16.56.24.mat');
 addpath(genpath('Functions'));
 
-speeds = [1 2 3];
+speeds = [1 2];
 
 for i_speed=1:size(speeds, 2)
     now_speed = speeds(1, i_speed);
