@@ -28,17 +28,17 @@ function Step01_SVMClassifier()
 %
 
 clear; clc
-ProjectName = 'rsvp';
-SubjectName = 'rsvp_02';  % 'grating03 to grating 16'
+ProjectName = 'rsvp';  % 'grating03 to grating 16'
 iitt = 'ii';                % 'ii' 'iitt' --- image-image-time-time mode off/on
 permutations = 'p100';       % 'p10'
 group = 'groupall';    	% 'groupall' 'grouptest' 'group1'
 clusterflag = '0';          % '0' for single pc, '1' for cluster
-speeds = {1,2,3};
+speeds = {1,2};
+condNum = 24;
 
 addpath(genpath('Functions')); % add path of functions
 
-param.trial_bin_size = 49;  % SVM parameter, group size
+param.trial_bin_size = 7;  % SVM parameter, group size
 
 %% parameters
 parameters_classifer;
@@ -46,23 +46,39 @@ parameters_analysis;
 
 %% Run SVM clissifer
 tic;
-disp(['Subject = ' SubjectName]);
-for i_speed = 1:length(speeds)
-    disp(['Speed = ' num2str(speeds{i_speed})]);
-    condA = ['Face_' num2str(speeds{i_speed})];
-    condB = ['Non-face_' num2str(speeds{i_speed})];
+for i_subject = 4:4
+    SubjectName = ['rsvp_' num2str(i_subject, '%.2d')];
+    disp(['Subject = ' SubjectName]);
+    param.SubjectName = SubjectName;
     
-    param.onset_time = 0 - 5 * param.framesec * speeds{i_speed};
-    param.offset_time = 0 + 6 * param.framesec * speeds{i_speed};
-    param.speed = speeds{i_speed};
-    
-    if(strcmp(iitt,'ii')) 
-        [AccuracyMEG ,Weight,param] = svm_contrast_conditions_perm(SubjectName,{num2str(condA)},{num2str(condB)},param); 
+    for i_speed = 2:length(speeds)
+        disp(['Speed = ' num2str(speeds{i_speed})]);
+
+        for i_condA = 1:(condNum - 1)
+            for i_condB = (i_condA + 1):condNum
+                
+                condA = speeds{i_speed} * 100 + i_condA;
+                condB = speeds{i_speed} * 100 + i_condB;
+                disp([num2str(condA) '_versus_' num2str(condB)]);
+
+                param.onset_time = 0 - 5 * param.framesec * speeds{i_speed};
+                param.offset_time = 0 + 6 * param.framesec * speeds{i_speed};
+                param.speed = speeds{i_speed};
+
+                if(strcmp(iitt,'ii')) 
+                    [AccuracyMEGTemp ,Weight,param] = svm_contrast_conditions_perm(SubjectName,{num2str(condA)},{num2str(condB)},param); 
+                end
+                if(strcmp(iitt,'iitt')) 
+                    [AccuracyIITT,Weight,param] = svm_contrast_conditions_perm(SubjectName,{num2str(condA)},{num2str(condB)},param); 
+                end
+
+                AccuracyMEG.matrix(i_condA, i_condB, :) = AccuracyMEGTemp;
+                save(['Results/' SubjectName '/mat/Accuracy_' num2str(speeds{i_speed})], 'AccuracyMEG','Weight','param');
+
+            end
+        end
+        clear AccuracyMEG;
     end
-    if(strcmp(iitt,'iitt')) 
-        [AccuracyIITT,Weight,param] = svm_contrast_conditions_perm(SubjectName,{num2str(condA)},{num2str(condB)},param); 
-    end
-    save(['Results/' SubjectName '/mat/Accuracy_' num2str(speeds{i_speed})], 'AccuracyMEG','Weight','param');
 end
     
 disp('All finished!');

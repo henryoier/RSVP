@@ -8,7 +8,6 @@ end
 
 param.data_type = 'MEG';
 param.ProjectName = ProjectName;
-param.SubjectName = SubjectName;
 param.f_lowpass = 30;
 param.latency = 0.043; % video latency 
 param.framesec = 0.017; % seconds per frame in the projecter 
