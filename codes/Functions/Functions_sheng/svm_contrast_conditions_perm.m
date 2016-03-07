@@ -80,21 +80,21 @@ for p = 1:num_permutations
          
     if (p == 1) param.SVM_vector_length = size(train_trials,2); end
     parfor tndx_train = 1:ntimes
-        
-        if strcmp(param.iitt,'ii')  % ncondtitions-ncondtitions-time matric
-            % libsvm-3.18
-            model = svmtrain(train_label',train_trials(:,:,tndx_train),'-s 0 -t 0 -q');
-            [predicted_label, Accuracy_tmp, decision_values] = svmpredict(test_label', test_trials(:,:,tndx_train), model);
-            AccuracyMEG_sum(tndx_train) = AccuracyMEG_sum(tndx_train) + Accuracy_tmp(1);
-        end
-        
-%         if strcmp(param.iitt,'iitt') % ncondtitions-ncondtitions-time-time matric
+%         
+%         if strcmp(param.iitt,'ii')  % ncondtitions-ncondtitions-time matric
+%             % libsvm-3.18
 %             model = svmtrain(train_label',train_trials(:,:,tndx_train),'-s 0 -t 0 -q');
-%             for tndx_test = 1:ntimes
-%                 [predicted_label, Accuracy_tmp, decision_values] = svmpredict(test_label', test_trials(:,:,tndx_test), model);
-%                 AccuracyIITT_sum(tndx_train,tndx_test) = AccuracyIITT_sum(tndx_train,tndx_test) + Accuracy_tmp(1);
-%             end
+%             [predicted_label, Accuracy_tmp, decision_values] = svmpredict(test_label', test_trials(:,:,tndx_train), model);
+%             AccuracyMEG_sum(tndx_train) = AccuracyMEG_sum(tndx_train) + Accuracy_tmp(1);
 %         end
+        
+        if strcmp(param.iitt,'iitt') % ncondtitions-ncondtitions-time-time matric
+            model = svmtrain(train_label',train_trials(:,:,tndx_train),'-s 0 -t 0 -q');
+            for tndx_test = 1:ntimes
+                [predicted_label, Accuracy_tmp, decision_values] = svmpredict(test_label', test_trials(:,:,tndx_test), model);
+                AccuracyIITT_sum(tndx_train,tndx_test) = AccuracyIITT_sum(tndx_train,tndx_test) + Accuracy_tmp(1);
+            end
+        end
 
         % save weight parameters of SVM
         Weight_sum(:,tndx_train) = Weight_sum(:,tndx_train) + (model.sv_coef' * model.SVs)';
