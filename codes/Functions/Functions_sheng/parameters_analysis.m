@@ -1,7 +1,7 @@
 % parameters_analysis;
 
 if clusterflag
-    param.brainstorm_db = ['[CLUSTER PATH]' ProjectName '/data'];
+    param.brainstorm_db = ['/om/user/shengqin' ProjectName '/brainstorm_db/data'];
 else
     param.brainstorm_db = ['/dataslow/sheng/rsvp/brainstorm_db/' ProjectName '/data'];
 end

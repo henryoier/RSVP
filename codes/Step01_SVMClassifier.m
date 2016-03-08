@@ -31,8 +31,8 @@ clear; clc
 ProjectName = 'rsvp';  % 'grating03 to grating 16'
 iitt = 'iitt';                % 'ii' 'iitt' --- image-image-time-time mode off/on
 permutations = 'p100';       % 'p10'
-group = 'groupall';    	% 'groupall' 'grouptest' 'group1'
-clusterflag = '0';          % '0' for single pc, '1' for cluster
+% 'groupall' 'grouptest' 'group1'
+clusterflag = '1';          % '0' for single pc, '1' for cluster
 speeds = {1,2};
 condNum = 24;
 
