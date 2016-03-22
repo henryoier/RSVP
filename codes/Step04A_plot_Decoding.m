@@ -22,12 +22,12 @@ end
 for i_speed = 1:2
     disp(['Speed = ' num2str(speeds{i_speed})]); 
     
-    n_subjects = 4:5;
+    n_subjects = 8:8;
     
-    SubjectName_all = '3rsvp46';
+    SubjectName_all = '2rsvp78';
     
-    %for i_subject = 0; SubjectName = SubjectName_all;
-    for i_subject = n_subjects; SubjectName = ['rsvp_' num2str(i_subject, '%.2d')];
+    for i_subject = 0; SubjectName = SubjectName_all;
+    %for i_subject = n_subjects; SubjectName = ['rsvp_' num2str(i_subject, '%.2d')];
         disp(['Subject = ' SubjectName]);
         
         if strcmp(iitt, 'ii')

@@ -10,7 +10,7 @@
 %
 clear; clc
 ProjectName = 'rsvp';  % 'grating03 to grating 16'
-iitt = 'iitt';                % 'ii' 'iitt' --- image-image-time-time mode off/on
+iitt = 'ii';                % 'ii' 'iitt' --- image-image-time-time mode off/on
 speeds = {1,2};
 condNum = 24;
 project_location = ['/dataslow/sheng/' ProjectName];
@@ -25,13 +25,13 @@ end
 
 %% Merge all results
 tic;
-for i_speed = 2:2
+for i_speed = 1:2
     disp(['Speed = ' num2str(speeds{i_speed})]); 
     
     n_subject = 0;
-    n_subjects = 4:6;
+    n_subjects = 7:8;
     
-    SubjectName_all = '3rsvp46';
+    SubjectName_all = '2rsvp78';
     
     if strcmp(iitt, 'ii')
         for i_subject = n_subjects

@@ -27,7 +27,7 @@ end
 
 %% Merge all results
 tic;
-for i_subject = 7:7
+for i_subject = 8:8
     SubjectName = ['rsvp_' num2str(i_subject, '%.2d')];
     disp(['Subject = ' SubjectName]);
     if strcmp(iitt, 'ii')
@@ -36,7 +36,7 @@ for i_subject = 7:7
         mat_location = [file_location ProjectName '/Results/' SubjectName '/mat/IITT/'];
     end
     
-    for i_speed = 1:1
+    for i_speed = 1:2
         disp(['Speed = ' num2str(speeds{i_speed})]);    
         
         %% Time Decoding

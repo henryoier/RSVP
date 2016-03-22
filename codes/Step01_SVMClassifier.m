@@ -37,60 +37,93 @@ speeds = {1,2};
 condNum = 24;
 
 addpath(genpath('Functions')); % add path of functions
+addpath(genpath('/dataslow/sheng/Previous Work By Mingtong/libsvm-3.18'));
 
-param.trial_bin_size = 7;  % SVM parameter, group size
+param.trial_bin_size = 6;  % SVM parameter, group size
 
 %% parameters
 parameters_classifer;
 parameters_analysis;
 
+condAs = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10,10,10,10,10,10,10,10,10,10,10,10,10,10,11,11,11,11,11,11,11,11,11,11,11,11,11,12,12,12,12,12,12,12,12,12,12,12,12,13,13,13,13,13,13,13,13,13,13,13,14,14,14,14,14,14,14,14,14,14,15,15,15,15,15,15,15,15,15,16,16,16,16,16,16,16,16,17,17,17,17,17,17,17,18,18,18,18,18,18,19,19,19,19,19,20,20,20,20,21,21,21,22,22,23];
+condBs = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,11,12,13,14,15,16,17,18,19,20,21,22,23,24,12,13,14,15,16,17,18,19,20,21,22,23,24,13,14,15,16,17,18,19,20,21,22,23,24,14,15,16,17,18,19,20,21,22,23,24,15,16,17,18,19,20,21,22,23,24,16,17,18,19,20,21,22,23,24,17,18,19,20,21,22,23,24,18,19,20,21,22,23,24,19,20,21,22,23,24,20,21,22,23,24,21,22,23,24,22,23,24,23,24,24];
 %% Run SVM clissifer
 tic;
-for i_subject = 7:7
+for i_subject = 8:8
     SubjectName = ['rsvp_' num2str(i_subject, '%.2d')];
     disp(['Subject = ' SubjectName]);
     param.SubjectName = SubjectName;
     
-    for i_speed = 1:2
+    for i_speed = 1:1
         disp(['Speed = ' num2str(speeds{i_speed})]);
         param.onset_time = 0 - 5 * param.framesec * speeds{i_speed};
         param.offset_time = 0 + 6 * param.framesec * speeds{i_speed};
         param.speed = speeds{i_speed};
 
-        for i_condA = 1:(condNum - 1)
-            for i_condB = (i_condA + 1):condNum
-                
-                condA = speeds{i_speed} * 100 + i_condA;
-                condB = speeds{i_speed} * 100 + i_condB;
-                disp([num2str(condA) '_versus_' num2str(condB)]);
+        for cond = 1:1
+            i_condA = condAs(cond);
+            i_condB = condBs(cond);
+            
+            condA = speeds{i_speed} * 100 + i_condA;
+            condB = speeds{i_speed} * 100 + i_condB;
+            disp([num2str(condA) '_versus_' num2str(condB)]);
 
-                param.condA = i_condA;
-                param.condB = i_condB;
-                
-                if(strcmp(iitt,'ii')) 
-                    [AccuracyMEG(i_condA,i_condB, :) ,Weight,param] = svm_contrast_conditions_perm(SubjectName,{num2str(condA)},{num2str(condB)},param); 
-                    save(['Results/' SubjectName '/mat/ACCY/Accuracy_' num2str(speeds{i_speed})], 'AccuracyMEG','param');
-                end
-                if(strcmp(iitt,'iitt')) 
-                    [AccuracyIITT(i_condA,i_condB,:,:),Weight,param] = svm_contrast_conditions_perm(SubjectName,{num2str(condA)},{num2str(condB)},param); 
-                    save(['Results/' SubjectName '/mat/IITT/AccuracyIITT_' num2str(speeds{i_speed})], 'AccuracyIITT','param');
-                end
+            if(strcmp(iitt,'ii')) 
+                [AccuracyMEG_temp(cond, :),Weight, Time] = svm_contrast_conditions_perm(SubjectName,{num2str(condA)},{num2str(condB)},param); 
+            end
+            if(strcmp(iitt,'iitt')) 
+                [AccuracyIITT_temp(cond,:,:),Weight, Time] = svm_contrast_conditions_perm(SubjectName,{num2str(condA)},{num2str(condB)},param); 
+            end
+            param.Time = Time;
+        end
+        
+        parfor cond = 2:length(condAs)
+            i_condA = condAs(cond);
+            i_condB = condBs(cond);
+            
+            condA = speeds{i_speed} * 100 + i_condA;
+            condB = speeds{i_speed} * 100 + i_condB;
+            disp([num2str(condA) '_versus_' num2str(condB)]);
+
+            if(strcmp(iitt,'ii')) 
+                [AccuracyMEG_temp(cond, :),Weight, other_Time] = svm_contrast_conditions_perm(SubjectName,{num2str(condA)},{num2str(condB)},param); 
+            end
+            if(strcmp(iitt,'iitt')) 
+                [AccuracyIITT_temp(cond,:,:),Weight, other_Time] = svm_contrast_conditions_perm(SubjectName,{num2str(condA)},{num2str(condB)},param); 
             end
         end
         
         if strcmp(iitt, 'ii')
-            AccuracyMEG(condNum,:,:) = zeros(condNum, length(param.Time));
+            AccuracyMEG = zeros(condNum, condNum, length(param.Time));
+            cond = 0;
+            for i_condA = 1:(condNum - 1)
+                for i_condB = (i_condA + 1):condNum
+                    cond = cond + 1;
+                    AccuracyMEG(i_condA, i_condB, :) = AccuracyMEG_temp(cond, :);
+                end
+            end
             AccuracyMEG = permute(AccuracyMEG, [2 1 3]);
-            save(['Results/' SubjectName '/mat/ACCY/Accuracy_' num2str(speeds{i_speed})], 'AccuracyMEG','param');
-            clear AccuracyMEG;
+%             AccuracyMEG(condNum,:,:) = zeros(condNum, length(param.Time));
+%             AccuracyMEG = permute(AccuracyMEG, [2 1 3]);
+             save(['Results/' SubjectName '/mat/ACCY/Accuracy_' num2str(speeds{i_speed})], 'AccuracyMEG','param');
+             clear AccuracyMEG;
         end
-        
+%         
         if strcmp(iitt, 'iitt')
-            AccuracyIITT(condNum,:,:,:) = zeros(condNum, length(param.Time), length(param.Time));
-            AccuracyIITT = permute(AccuracyIITT, [2 1 3 4]);
-            save(['Results/' SubjectName '/mat/IITT/AccuracyIITT_' num2str(speeds{i_speed})], 'AccuracyIITT','param');
-            clear AccuracyIITT;
+            AccuracyIITT = zeros(condNum, condNum, length(param.Time), length(param.Time));
+            cond = 0;
+            for i_condA = 1:(condNum - 1)
+                for i_condB = (i_condA + 1):condNum
+                    cond = cond + 1;
+                    AccuracyMEG(i_condA, i_condB, :, :) = AccuracyMEG_temp(cond, :, :);
+                end
+            end
+%             AccuracyIITT(condNum,:,:,:) = zeros(condNum, length(param.Time), length(param.Time));
+%             AccuracyIITT = permute(AccuracyIITT, [2 1 3 4]);
+             save(['Results/' SubjectName '/mat/IITT/AccuracyIITT_' num2str(speeds{i_speed})], 'AccuracyIITT','param');
+             clear AccuracyIITT;
         end
+
     end
 end
     
