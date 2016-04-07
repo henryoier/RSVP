@@ -1,4 +1,4 @@
-function h = plot_data(type, X, Y, STD, x_label, y_label, title_text, flag_save,legend_title)
+function h = plot_data(type, X, Y, STD, x_label, y_label, title_text, flag_save)
 %PLOT_ERRORBAR Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -19,9 +19,9 @@ box(axes1,'off');
 hold(axes1,'on');
 
 if strcmp(type, 'errorbar')
-    errorbar(X, Y', STD,'Marker','square','LineStyle','-.');
+    errorbar(X, Y, STD,'Marker','square','LineStyle','-.');
 else
-    plot(X, Y','Marker','square','LineStyle','-.');
+    plot(X, Y,'Marker','square','LineStyle','-.');
 end
 
 % Create xlabel
@@ -30,7 +30,5 @@ xlabel(x_label);
 % Create ylabel
 ylabel(y_label);
 title(title_text, 'FontSize', text_size);
-
-legend(legend_title);
 end
 

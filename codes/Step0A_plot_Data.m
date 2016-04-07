@@ -19,9 +19,9 @@ if (flag_save)
     % set(h_Diff, 'PaperUnits', 'centimeters', 'PaperPosition', [0 0 32 18]);
 end
 
-if strcmp(param.iitt, 'ii')
+if strcmp(param.iitt, 'ii') 
     plot_Data = Data;
-
+    
     Time = Time * 1000;
     %plot_Data = plot_Data(plot_Time);
 
@@ -47,7 +47,9 @@ if strcmp(param.iitt, 'ii')
     ylabel('Accuracy(%)');
     set(gca,'xtick', -1000:200:2400);
     set(gca,'FontSize',text_size);
-else
+end
+
+if strcmp(param.iitt, 'iitt')
     Time = Time * 1000;
     
     imagesc(Time, Time, Data);colorbar;colormap(jet);
@@ -67,6 +69,41 @@ else
     set(gca,'xtick', -1000:200:2400);
     set(gca,'FontSize',text_size);
 end
+
+if strcmp(param.iitt, 'cross')
+    title_text = [strrep(param.SubjectName, '_', ' ') ' ' title_info ' train speed: '...
+        num2str(param.train_speed) ' test speed: ' num2str(param.test_speed)];
+
+    plot_Data = Data;
+    
+    Time = Time * 1000;
+    %plot_Data = plot_Data(plot_Time);
+
+    % smooth accuracy data, not significant time data
+    if ( flag_smooth ) 
+        plot_Data = conv(plot_Data,smooth_vector,'same');
+    end
+
+    plot(Time,plot_Data,'LineWidth',1.5,'Color',[0 0 0]);
+
+    axis([min(Time),max(Time),YMIN,YMAX]);
+    if (YMIN>=0) line('XData', [min(Time),max(Time)], 'YData', [50 50], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[204/255 102/255 0]); end
+    if (YMIN<0) line('XData', [min(Time),max(Time)], 'YData', [0 0], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[204/255 102/255 0]); end
+
+    line('XData', [0 0], 'YData', [YMIN,YMAX], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[0 0 1]);
+
+    line('XData', [0-5 * param.train_speed 0-5 * param.train_speed] * param.framesec * 1000, 'YData', [YMIN,YMAX], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[0 1 0])
+    line('XData', [0-5 * param.test_speed 0-5 * param.test_speed] * param.framesec * 1000, 'YData', [YMIN,YMAX], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[1 0 0])
+    line('XData', [6 * param.train_speed 6 * param.train_speed] * param.framesec * 1000, 'YData', [YMIN,YMAX], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[0 1 0])
+    line('XData', [6 * param.test_speed 6 * param.test_speed] * param.framesec * 1000, 'YData', [YMIN,YMAX], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[1 0 0])
+    
+    title(title_text, 'FontSize', text_size)
+    xlabel('Time(ms)');
+    ylabel('Accuracy(%)');
+    set(gca,'xtick', -1000:200:2400);
+    set(gca,'FontSize',text_size);
+end
+
 %print(h, ['Results/' param.SubjectName '/graph/' param.SubjectName '_TimeDecoding_speed_' num2str(param.speed)],'-djpeg','-r0');
 % % % 
 % close all;

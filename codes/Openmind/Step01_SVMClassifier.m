@@ -1,4 +1,4 @@
-function Step01_SVMClassifier(i_condA, i_condB)
+function Step01_SVMClassifier(i_subject, i_speed, i_condA, i_condB)
 %function Step01_SVMClassifier(ProjectName,SubjectName,RhythmMode,SensorMode,iitt,permutations,group,clusterflag)
 % SVM Decoding, adapted from Mingtong, RM Cichy & D Pantazis
 %
@@ -29,15 +29,21 @@ function Step01_SVMClassifier(i_condA, i_condB)
 
 ProjectName = 'rsvp';  % 'grating03 to grating 16'
 iitt = 'iitt';                % 'ii' 'iitt' --- image-image-time-time mode off/on
-permutations = 'p100';       % 'p10'
+permutations = 'p5';       % 'p10'
 % 'groupall' 'grouptest' 'group1'
 clusterflag = '0';          % '0' for single pc, '1' for cluster
 speeds = {1,2};
 condNum = 24;
 
-addpath(genpath('Functions')); % add path of functions
+% i_subject = str2num(i_subject);
+% i_speed = str2num(i_speed);
+% i_condA = str2num(i_condA);
+% i_condB = str2num(i_condB);
 
-param.trial_bin_size = 7;  % SVM parameter, group size
+addpath(genpath('Functions')); % add path of functions
+addpath(genpath('libsvm-3.18'));
+
+param.trial_bin_size = 6;  % SVM parameter, group size
 
 %% parameters
 parameters_classifer;
@@ -45,19 +51,21 @@ parameters_analysis;
 
 %% Run SVM clissifer
 tic;
-for i_subject = 4:4
+for i_subject = i_subject
     SubjectName = ['rsvp_' num2str(i_subject, '%.2d')];
     disp(['Subject = ' SubjectName]);
     param.SubjectName = SubjectName;
-    
-    for i_speed = 1:1
+
+    for i_speed = i_speed
         disp(['Speed = ' num2str(speeds{i_speed})]);
+        mkdir(['Results/' SubjectName '/mat/IITT'], ['speed_' num2str(speeds{i_speed})]);
+        
         param.onset_time = 0 - 5 * param.framesec * speeds{i_speed};
         param.offset_time = 0 + 6 * param.framesec * speeds{i_speed};
         param.speed = speeds{i_speed};
  
-        condA = speeds{i_speed} * 100 + i_condA;
-        condB = speeds{i_speed} * 100 + i_condB;
+        condA = i_condA + speeds{i_speed} * 100;
+        condB = i_condB + speeds{i_speed} * 100;
         disp([num2str(condA) '_versus_' num2str(condB)]);
 
         param.condA = i_condA;
@@ -68,10 +76,9 @@ for i_subject = 4:4
             save(['Results/' SubjectName '/Accuracy_' num2str(speeds{i_speed})], 'AccuracyMEG','Weight','param');
         end
         if(strcmp(iitt,'iitt')) 
-            [AccuracyIITT.matrix(i_condA,i_condB,:,:),Weight,param] = svm_contrast_conditions_perm(SubjectName,{num2str(condA)},{num2str(condB)},param); 
-            save(['Results/' SubjectName '/AccuracyIITT_' num2str(speeds{i_speed}) '_' num2str(i_condA) '_' num2str(i_condB)] ,'AccuracyIITT','Weight','param');
-        end
-                
+            [AccuracyIITT,Weight,param] = svm_contrast_conditions_perm(SubjectName,{num2str(condA)},{num2str(condB)},param); 
+            save(['Results/' SubjectName '/mat/IITT/speed_' num2str(speeds{i_speed}) '/AccuracyIITT_' num2str(speeds{i_speed}) '_' num2str(i_condA) '_' num2str(i_condB)] ,'AccuracyIITT','Weight','param');
+        end   
     end
 end
     

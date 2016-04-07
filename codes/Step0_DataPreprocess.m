@@ -3,12 +3,11 @@
 % Input files
 sFiles = [];
 SubjectNames = {...
-    'rsvp_08'};
+    'rsvp_19'};
 RawFiles = {...
-    '/dataslow/sheng/rsvp/rawdata/rsvp_08/160321/rsvp08_tsss_mc.fif',
-    '/dataslow/sheng/rsvp/rawdata/rsvp_08/160321/rsvp08-1_tsss_mc.fif',
-    '/dataslow/sheng/rsvp/rawdata/rsvp_08/160321/rsvp08-2_tsss_mc.fif'};
-
+    '/dataslow/sheng/rsvp/rawdata/rsvp_19/160406/rsvp19_tsss_mc.fif',
+    '/dataslow/sheng/rsvp/rawdata/rsvp_19/160406/rsvp19-1_tsss_mc.fif',
+    '/dataslow/sheng/rsvp/rawdata/rsvp_19/160406/rsvp19-2_tsss_mc.fif'};
 for i_RawFile = 1:3
     for i_speed = 1:2
         % Start a new report

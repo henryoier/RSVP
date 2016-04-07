@@ -1,4 +1,4 @@
-function [Accuracy,Weight,param_out] = svm_contrast_conditions_perm(subject,conditionsA,conditionsB,param)
+function [Accuracy,Weight,Time] = svm_contrast_conditions_perm(subject,conditionsA,conditionsB,param)
 % function [Accuracy,Weight,param_out] = svm_contrast_conditions_perm(subject,conditionsA,conditionsB,param)
 %
 % Apply SVM classifier on MEG trials with supervised learning. Uses trial subaverages and permutations
@@ -24,8 +24,7 @@ brainstorm_db = param.brainstorm_db;
 trial_bin_size = param.trial_bin_size;
 
 %% load data (force equal number of trials per condition) (single float)
-[trial_raw,param] = load_trials(brainstorm_db,subject,conditionsA,conditionsB,param);
-Time = param.Time;
+[trial_raw,Time] = load_trials(brainstorm_db,subject,conditionsA,conditionsB,param);
 
 ntimes = size(trial_raw{1}{1},2);
 ntrials = min([length(trial_raw{1}) length(trial_raw{2})]);
@@ -58,9 +57,9 @@ rng('shuffle'); % seeds the random number generator based on the current time
 
 %% perform decoding
 for p = 1:num_permutations
-    if rem(p,10)==1
-        disp(['permutaions: ' num2str(p) ' / ' num2str(num_permutations)]);
-    end
+%     if rem(p,10)==1
+%         disp(['permutaions: ' num2str(p) ' / ' num2str(num_permutations)]);
+%     end
 
     %randomize samples
     perm_ndxA = randperm(nsamples*trial_bin_size);
@@ -79,7 +78,7 @@ for p = 1:num_permutations
     test_trials = permute(test_trials,[3 1 2]);
          
     if (p == 1) param.SVM_vector_length = size(train_trials,2); end
-    parfor tndx_train = 1:ntimes
+    for tndx_train = 1:ntimes
 %         
         if strcmp(param.iitt,'ii')  % ncondtitions-ncondtitions-time matric
             % libsvm-3.18
@@ -88,13 +87,13 @@ for p = 1:num_permutations
             AccuracyMEG_sum(tndx_train) = AccuracyMEG_sum(tndx_train) + Accuracy_tmp(1);
         end
         
-%         if strcmp(param.iitt,'iitt') % ncondtitions-ncondtitions-time-time matric
-%             model = svmtrain(train_label',train_trials(:,:,tndx_train),'-s 0 -t 0 -q');
-%             for tndx_test = 1:ntimes
-%                 [predicted_label, Accuracy_tmp, decision_values] = svmpredict(test_label', test_trials(:,:,tndx_test), model);
-%                 AccuracyIITT_sum(tndx_train,tndx_test) = AccuracyIITT_sum(tndx_train,tndx_test) + Accuracy_tmp(1);
-%             end
-%         end
+        if strcmp(param.iitt,'iitt') % ncondtitions-ncondtitions-time-time matric
+            model = svmtrain(train_label',train_trials(:,:,tndx_train),'-s 0 -t 0 -q');
+            for tndx_test = 1:ntimes
+                [predicted_label, Accuracy_tmp, decision_values] = svmpredict(test_label', test_trials(:,:,tndx_test), model);
+                AccuracyIITT_sum(tndx_train,tndx_test) = AccuracyIITT_sum(tndx_train,tndx_test) + Accuracy_tmp(1);
+            end
+        end
 
         % save weight parameters of SVM
         Weight_sum(:,tndx_train) = Weight_sum(:,tndx_train) + (model.sv_coef' * model.SVs)';

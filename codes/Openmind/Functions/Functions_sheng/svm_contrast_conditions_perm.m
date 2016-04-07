@@ -56,6 +56,7 @@ if strcmp(param.iitt,'iitt') AccuracyIITT_sum = zeros(ntimes,ntimes); end
 Weight_sum = zeros(nchannels,ntimes);
 rng('shuffle'); % seeds the random number generator based on the current time
 
+parpool;
 %% perform decoding
 for p = 1:num_permutations
     if rem(p,10)==1
@@ -79,7 +80,7 @@ for p = 1:num_permutations
     test_trials = permute(test_trials,[3 1 2]);
          
     if (p == 1) param.SVM_vector_length = size(train_trials,2); end
-    parfor tndx_train = 1:ntimes
+    for tndx_train = 1:ntimes
 %         
 %         if strcmp(param.iitt,'ii')  % ncondtitions-ncondtitions-time matric
 %             % libsvm-3.18
@@ -90,7 +91,7 @@ for p = 1:num_permutations
         
         if strcmp(param.iitt,'iitt') % ncondtitions-ncondtitions-time-time matric
             model = svmtrain(train_label',train_trials(:,:,tndx_train),'-s 0 -t 0 -q');
-            for tndx_test = 1:ntimes
+            parfor tndx_test = 1:ntimes
                 [predicted_label, Accuracy_tmp, decision_values] = svmpredict(test_label', test_trials(:,:,tndx_test), model);
                 AccuracyIITT_sum(tndx_train,tndx_test) = AccuracyIITT_sum(tndx_train,tndx_test) + Accuracy_tmp(1);
             end

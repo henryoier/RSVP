@@ -1,0 +1,7 @@
+module add mit/matlab/2015a
+module add openmind/srun.x11/v1
+cd /om/user/shengqin/rsvp
+sbatch --mem=5000 E_S4A1B2.txt
+sbatch --mem=5000 E_S4A1B3.txt
+sbatch --mem=5000 E_S4A2B3.txt
+squeue -u shengqin

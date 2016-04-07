@@ -1,7 +1,7 @@
-function [trial,param_out] = load_trials(brainstorm_db,subject,conditionsA,conditionsB,param,ndx_trials)
+function [trial, Time] = load_trials(brainstorm_db,subject,conditionsA,conditionsB,param,ndx_trials)
 %   [DESCRIPTION]
 %
-%   [trial,param_out] = load_trials(brainstorm_db,subject,conditionsA,conditionsB,param,ndx_trials)
+%   [trial, Time] = load_trials(brainstorm_db,subject,conditionsA,conditionsB,param,ndx_trials)
 % 
 %=============================================
 %   input:
@@ -113,5 +113,3 @@ Time = tempA.Time;
 if(~flag_B)
     trial = trial{1};
 end
-param.Time = Time;
-param_out = param;

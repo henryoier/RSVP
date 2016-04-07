@@ -1,0 +1,5 @@
+#!/bin/sh
+#SBATCH --time=40:00:00
+#SBATCH --job-name=E_S4A1B2
+#SBATCH --error=E_S4A1B2.err
+matlab -nodisplay -singleCompThread -r "Step01_SVMClassifier 1 2"

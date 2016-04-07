@@ -1,4 +1,4 @@
-function [Accuracy, Weight, param_train_out, param_test_out] = svm_contrast_conditions_perm_classification(subject,conditionsA_train,conditionsB_train,conditionsA_test,conditionsB_test,param_train, param_test)
+function [Accuracy, Weight, Time_train_out, Time_test_out] = svm_contrast_conditions_perm_classification(subject,conditionsA_train,conditionsB_train,conditionsA_test,conditionsB_test,param_train, param_test)
 % function [accuracy,Time] = svm_contrast_conditions_perm(subject,conditionsA,conditionsB,param)
 %
 % Apply SVM classifier on MEG trials with supervised learning. Uses trial
@@ -24,8 +24,7 @@ data_type = param_train.data_type;
 % train data%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% load data (force equal number of trials per condition)
-[trial_train,param_train] = load_trials(brainstorm_db,subject,conditionsA_train,conditionsB_train,param_train);
-Time_train = round(param_train.Time * 1000) / 1000;
+[trial_train,Time_train] = load_trials(brainstorm_db,subject,conditionsA_train,conditionsB_train,param_train);
 
 ntimes_train = size(trial_train{1}{1},2);
 ntrials_train = min([length(trial_train{1}) length(trial_train{2})]);
@@ -48,8 +47,7 @@ train_label = [ones(1,nsamples_train) 2*ones(1,nsamples_train)];
 %test data%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% load data (force equal number of trials per condition)
-[trial_test,param_test] = load_trials(brainstorm_db,subject,conditionsA_test,conditionsB_test,param_test);
-Time_test = round(param_test.Time * 1000)/1000;
+[trial_test, Time_test] = load_trials(brainstorm_db,subject,conditionsA_test,conditionsB_test,param_test);
 
 ntimes_test = size(trial_test{1}{1},2);
 ntrials_test = min([length(trial_test{1}) length(trial_test{2})]);
@@ -62,6 +60,9 @@ for i = 1:2 %for both groups
         trial_test{i}{j} = trial_test{i}{j} ./ repmat( std(trial_test{i}{j}(:,baseline_range)')',1,ntimes_test);
     end
 end
+
+Time_train_out = Time_train;
+Time_test_out = Time_out;
 
 %get labels for test
 nsamples_test = floor(ntrials_test/trial_bin_size);
@@ -93,10 +94,6 @@ test_trialsA = zeros(nsamples_test,nchannels,ntimes);
 test_trialsB = zeros(nsamples_test,nchannels,ntimes);
 
 for p = 1:num_permutations
-    
-    if ~rem(p,10)
-        disp(['permutations: ' num2str(p) '/' num2str(num_permutations)]);
-    end
 
     %randomize samples
     perm_ndx_train = randperm(nsamples_train*trial_bin_size)';
@@ -115,7 +112,7 @@ for p = 1:num_permutations
     test_trials = [test_trialsA;test_trialsB];
     
     if (p==1) param_train.SVM_vector_length = size(train_trials, 2);end
-    parfor tndx = 1:ntimes
+    for tndx = 1:ntimes
         
         %model = svmtrain(train_trials(:,:,tndx), train_label','method','LS');
         %group = svmclassify(model,test_trials(:,:,tndx));
@@ -123,10 +120,10 @@ for p = 1:num_permutations
         %Accuracy(p,tndx) = accuracy;
         
         %use train trials
-        model = svmtrain(train_label',train_trials(:,:,Time_train(tndx)),'-s 0 -t 0 -q');
+        model = svmtrain(train_label',train_trials(:,:,tndx),'-s 0 -t 0 -q');
         
         %use test trials
-        [predicted_label, Accuracy_tmp, decision_values] = svmpredict(test_label', test_trials(:,:,Time_test(tndx)), model);
+        [predicted_label, Accuracy_tmp, decision_values] = svmpredict(test_label', test_trials(:,:,tndx), model);
         AccuracyMEG_sum(tndx) = AccuracyMEG_sum(tndx) + Accuracy_tmp(1);
         
         Weight_sum(:, tndx) = Weight_sum(:,tndx) + (model.sv_coef' * model.SVs)';
@@ -137,5 +134,3 @@ end
 %save and plot results
 Accuracy = AccuracyMEG_sum / num_permutations;
 Weight = Weight_sum / num_permutations;
-param_train_out = param_train;
-param_test_out = param_test;
