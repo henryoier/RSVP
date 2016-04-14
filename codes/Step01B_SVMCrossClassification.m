@@ -1,8 +1,5 @@
 % SVM Cross Classification
 %===================================================================
-
-function Step01_SVMClassifier()
-%function Step01_SVMClassifier(ProjectName,SubjectName,RhythmMode,SensorMode,iitt,permutations,group,clusterflag)
 % SVM Decoding, adapted from Mingtong, RM Cichy & D Pantazis
 %
 % Step01_SVMClassifier(ProjectName,SubjectName,RhythmMode,SensorMode,iitt,permutations,group,clusterflag) 
@@ -52,7 +49,7 @@ condAs = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,
 condBs = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,11,12,13,14,15,16,17,18,19,20,21,22,23,24,12,13,14,15,16,17,18,19,20,21,22,23,24,13,14,15,16,17,18,19,20,21,22,23,24,14,15,16,17,18,19,20,21,22,23,24,15,16,17,18,19,20,21,22,23,24,16,17,18,19,20,21,22,23,24,17,18,19,20,21,22,23,24,18,19,20,21,22,23,24,19,20,21,22,23,24,20,21,22,23,24,21,22,23,24,22,23,24,23,24,24];
 %% Run SVM clissifer
 tic;
-for i_subject = 7:18
+for i_subject = 21:21
     SubjectName = ['rsvp_' num2str(i_subject, '%.2d')];
     disp(['Subject = ' SubjectName]);
     param.SubjectName = SubjectName;
@@ -93,7 +90,7 @@ for i_subject = 7:18
             parfor cond = 2:length(condAs)
                 i_condA = condAs(cond);
                 i_condB = condBs(cond);
-
+                
                 condA_train = speeds{train_speed} * 100 + i_condA;
                 condB_train = speeds{train_speed} * 100 + i_condB;
                 condA_test = speeds{test_speed} * 100 + i_condA;

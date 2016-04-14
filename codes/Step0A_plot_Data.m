@@ -1,12 +1,12 @@
-function h = Step0A_plot_Data(Data, param, title_info)
+function [h, h_stat] = Step0A_plot_Data(Data, param, title_info)
 
 flag_save = 1;
-flag_smooth = 1;
+flag_smooth = 0;
 smooth_vector = ones(1,50)/50;
 Time = param.Time;
 
-YMIN = min(Data);
-YMAX = max(Data);
+YMIN = 40;
+YMAX = 80;
 
 h = figure('color', [1 1 1]); hold on; 
 text_size = 12;
@@ -20,7 +20,7 @@ if (flag_save)
 end
 
 if strcmp(param.iitt, 'ii') 
-    plot_Data = Data;
+    plot_Data = Data.mean;
     
     Time = Time * 1000;
     %plot_Data = plot_Data(plot_Time);
@@ -30,6 +30,9 @@ if strcmp(param.iitt, 'ii')
         plot_Data = conv(plot_Data,smooth_vector,'same');
     end
 
+    fill([Time, fliplr(Time)], [Data.mean - Data.std, fliplr(Data.mean + Data.std)],...
+        [135 206 250] / 255 , 'linestyle', 'none');
+    
     plot(Time,plot_Data,'LineWidth',1.5,'Color',[0 0 0]);
 
     axis([min(Time),max(Time),YMIN,YMAX]);
@@ -42,6 +45,26 @@ if strcmp(param.iitt, 'ii')
     line('XData', [param.onset_time param.onset_time] * 1000, 'YData', [YMIN,YMAX], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[204/255 102/255 0])
     line('XData', [param.offset_time param.offset_time] * 1000, 'YData', [YMIN,YMAX], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[204/255 102/255 0])
     
+    % plot significant time
+    if (isfield(Data, 'stat_time'))
+        if size(Data.stat_time, 2) > 0
+            stat_stime = Data.stat_time;
+
+            %line(Time(stat_stime),48,'Marker', 'o','Markersize', 2, 'color', [0 0 0]);
+
+            line( Time(stat_stime),YMAX - 1, 'Marker', 'o','Markersize', 2, 'color', [135 206 250] / 255 );
+
+            %
+            % stat_ttest = Data.stat_ttest;
+            % line(Time(stat_ttest>0),30,'Marker', 'o' , 'Color','k');
+            %
+            % stat_pvalue = Data.stat_pvalue;
+            % line(Time(stat_pvalue>0),25,'Marker', 'o' , 'Color','k');
+        end
+       
+        h_stat = [];
+    end
+    
     title(title_text, 'FontSize', text_size)
     xlabel('Time(ms)');
     ylabel('Accuracy(%)');
@@ -52,7 +75,7 @@ end
 if strcmp(param.iitt, 'iitt')
     Time = Time * 1000;
     
-    imagesc(Time, Time, Data);colorbar;colormap(jet);
+    imagesc(Time, Time, Data.mean);colorbar;colormap(jet);
     set(gca, 'YDir', 'normal');
     axis equal;axis([min(Time) max(Time) min(Time) max(Time)]);
     
@@ -68,13 +91,15 @@ if strcmp(param.iitt, 'iitt')
     ylabel('Testing Time(ms)');
     set(gca,'xtick', -1000:200:2400);
     set(gca,'FontSize',text_size);
+    
+    
 end
 
 if strcmp(param.iitt, 'cross')
     title_text = [strrep(param.SubjectName, '_', ' ') ' ' title_info ' train speed: '...
         num2str(param.train_speed) ' test speed: ' num2str(param.test_speed)];
 
-    plot_Data = Data;
+    plot_Data = Data.mean;
     
     Time = Time * 1000;
     %plot_Data = plot_Data(plot_Time);
@@ -84,8 +109,11 @@ if strcmp(param.iitt, 'cross')
         plot_Data = conv(plot_Data,smooth_vector,'same');
     end
 
+    fill([Time, fliplr(Time)], [Data.mean - Data.std, fliplr(Data.mean + Data.std)],...
+        [135 206 250] / 255 , 'linestyle', 'none');
+    
     plot(Time,plot_Data,'LineWidth',1.5,'Color',[0 0 0]);
-
+    
     axis([min(Time),max(Time),YMIN,YMAX]);
     if (YMIN>=0) line('XData', [min(Time),max(Time)], 'YData', [50 50], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[204/255 102/255 0]); end
     if (YMIN<0) line('XData', [min(Time),max(Time)], 'YData', [0 0], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[204/255 102/255 0]); end
@@ -96,6 +124,26 @@ if strcmp(param.iitt, 'cross')
     line('XData', [0-5 * param.test_speed 0-5 * param.test_speed] * param.framesec * 1000, 'YData', [YMIN,YMAX], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[1 0 0])
     line('XData', [6 * param.train_speed 6 * param.train_speed] * param.framesec * 1000, 'YData', [YMIN,YMAX], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[0 1 0])
     line('XData', [6 * param.test_speed 6 * param.test_speed] * param.framesec * 1000, 'YData', [YMIN,YMAX], 'LineStyle', '-', 'LineWidth', 1.0, 'Color',[1 0 0])
+    
+     % plot significant time
+    if (isfield(Data, 'stat_time'))
+        if size(Data.stat_time, 2) > 0
+            stat_stime = Data.stat_time;
+
+            %line(Time(stat_stime),48,'Marker', 'o','Markersize', 2, 'color', [0 0 0]);
+
+            line( Time(stat_stime),YMAX - 1, 'Marker', 'o','Markersize', 2, 'color', [135 206 250] / 255 );
+
+            %
+            % stat_ttest = Data.stat_ttest;
+            % line(Time(stat_ttest>0),30,'Marker', 'o' , 'Color','k');
+            %
+            % stat_pvalue = Data.stat_pvalue;
+            % line(Time(stat_pvalue>0),25,'Marker', 'o' , 'Color','k');
+        end
+        
+        h_stat = [];
+    end
     
     title(title_text, 'FontSize', text_size)
     xlabel('Time(ms)');

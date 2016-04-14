@@ -24,7 +24,7 @@ condBs = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,3,4,5,6,7
 
 %% Merge all IITT results
 tic;
-for i_subject = 10:18
+for i_subject = 19:19
     SubjectName = ['rsvp_' num2str(i_subject, '%.2d')];
     disp(['Subject = ' SubjectName]);
     

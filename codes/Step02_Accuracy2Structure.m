@@ -13,7 +13,7 @@
 %
 clear; clc
 ProjectName = 'rsvp';  % 'grating03 to grating 16'
-iitt = 'cross';                % 'ii' 'iitt' --- image-image-time-time mode off/on
+iitt = 'iitt';                % 'ii' 'iitt' --- image-image-time-time mode off/on
 speeds = {1,2};
 condNum = 24;
 file_location = ['/dataslow/sheng/'];
@@ -33,7 +33,7 @@ end
 
 %% Merge all results
 tic;
-for i_subject = 7:18
+for i_subject = 7:19
     SubjectName = ['rsvp_' num2str(i_subject, '%.2d')];
     disp(['Subject = ' SubjectName]);
     if strcmp(iitt, 'ii')
@@ -146,10 +146,10 @@ for i_subject = 7:18
                    end
                 end
 
-                Result.AccyAll.matrix = Accy;
-                Result.Within_Face.matrix = Within_Face;
-                Result.Within_Nonface.matrix = Within_Nonface;
-                Result.Between.matrix = Between;
+%                 Result.AccyAll.matrix = Accy;
+%                 Result.Within_Face.matrix = Within_Face;
+%                 Result.Within_Nonface.matrix = Within_Nonface;
+%                 Result.Between.matrix = Between;
 
                 Result.AccyAll.mean = Accy_mean;
                 Result.Within_Face.mean = Within_Face_mean;
@@ -202,7 +202,6 @@ for i_subject = 7:18
                     Result.Between.mean(:,t) = squeeze(sum(sum(Result.Between.matrix(:,:,t)))) / n_selected_between;
                 end
                 
-                Result.param.Time = (Result.param.Time / 1000) - 0.386;
                 if(speeds{i_speed} == 1)
                     save([savefile_location 'CROSS_' SubjectName '_train_1_test_2.mat'], 'Result');
                 else
